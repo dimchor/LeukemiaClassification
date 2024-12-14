@@ -4,6 +4,7 @@ from skimage.color.colorconv import rgb2gray
 from matplotlib import pyplot as plt
 import csv
 from pathlib import Path
+import tensorflow as tf
 
 from utilities import image_loader, label
 
@@ -17,6 +18,7 @@ HEALTHY = 0
 def main():
     dataset_path = Path(DATASET_PATH)
 
+    # Training set image loader
     il_train = image_loader(
         [
             dataset_path / "C-NMC_Leukemia/training_data/fold_0/all/",
@@ -28,6 +30,7 @@ def main():
         ],
         TRANSFORMS,
     )
+    # Validation set image loader
     il_validation = image_loader(
         [
             dataset_path
@@ -48,6 +51,17 @@ def main():
         for row in reader:
             validation_labels[row["new_names"]] = row["labels"]
 
+    # Generators
+    def training_gen():
+        for file, image in il_train:
+            yield image, label(file)["label"]
+
+    def validating_gen():
+        for file, image in il_validation:
+            yield image, validation_labels[file]
+
+    training_dataset = tf.data.Dataset.from_generator(training_gen)
+    validating_dataset = tf.data.Dataset.from_generator(validating_gen)
 
 if __name__ == "__main__":
     main()
