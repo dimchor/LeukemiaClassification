@@ -14,7 +14,8 @@ from utilities import image_loader, label
 from cnn import CNN
 
 # Download latest version of dataset
-DATASET_PATH = kagglehub.dataset_download("andrewmvd/leukemia-classification")
+# DATASET_PATH = kagglehub.dataset_download("andrewmvd/leukemia-classification")
+DATASET_PATH = "C:\\Users\\Dimi\\.cache\\kagglehub\\datasets\\andrewmvd\\leukemia-classification\\versions\\2"
 TRANSFORMS = [
     rgb2gray,
     lambda img: resize(img, (128, 128), anti_aliasing=True),
@@ -23,42 +24,14 @@ TRANSFORMS = [
 ]
 ALL = 1
 HEALTHY = 0
-BATCH_SIZE = 64
+BATCH_SIZE = 80
+EPOCHS = 10
 
 
 def main():
-    dataset_path = Path(DATASET_PATH)
-
-    # Training set image loader
-    il_train = image_loader(
-        [
-            str(dataset_path / "C-NMC_Leukemia/training_data/fold_0/all/") + os.sep,
-            str(dataset_path / "C-NMC_Leukemia/training_data/fold_0/hem/") + os.sep,
-            str(dataset_path / "C-NMC_Leukemia/training_data/fold_1/all/") + os.sep,
-            str(dataset_path / "C-NMC_Leukemia/training_data/fold_1/hem/") + os.sep,
-            str(dataset_path / "C-NMC_Leukemia/training_data/fold_2/all/") + os.sep,
-            str(dataset_path / "C-NMC_Leukemia/training_data/fold_2/hem/") + os.sep,
-            # str(Path("C:/Users/Dimi/Desktop/training/")) + os.sep
-        ],
-        TRANSFORMS,
-    )
-    # Validation set image loader
-    il_validation = image_loader(
-        [
-            str(
-                dataset_path
-                / "C-NMC_Leukemia/validation_data"
-                / "C-NMC_test_prelim_phase_data/"
-            )
-            + os.sep
-            # str(Path("C:/Users/Dimi/Desktop/validation/")) + os.sep
-        ],
-        TRANSFORMS,
-    )
-
     validation_labels = {}
     with open(
-        dataset_path
+        Path(DATASET_PATH)
         / "C-NMC_Leukemia/validation_data"
         / "C-NMC_test_prelim_phase_data_labels.csv",
         newline="",
@@ -69,59 +42,70 @@ def main():
 
     # Generators
     def training_gen():
-        images_batch = []
-        labels_batch = []
+        images = []
+        labels = []
         counter = 0
 
-        for file, image in il_train:
-            images_batch.append(image)
-            labels_batch.append(ALL if label(file)["label"] == "all" else HEALTHY)
-            counter += 1
-
-            if counter == BATCH_SIZE:
-                yield np.array(images_batch), np.array(labels_batch)
-                images_batch = []
-                labels_batch = []
+        while True:
+            # Training set image loader
+            il_train = image_loader(DATASET_PATH, "training.txt", TRANSFORMS)
+            for file, image in il_train:
+                images.append(image)
+                labels.append(ALL if label(file)["label"] == "all" else HEALTHY)
+                counter += 1
+                if counter < BATCH_SIZE:
+                    continue
+                yield np.array(images), np.array(labels)
+                images = []
+                labels = []
                 counter = 0
 
     def validating_gen():
-        images_batch = []
-        labels_batch = []
+        images = []
+        labels = []
         counter = 0
 
-        for file, image in il_validation:
-            images_batch.append(image)
-            labels_batch.append(ALL if validation_labels[file] == "1" else HEALTHY)
-            counter += 1
-
-            if counter == BATCH_SIZE:
-                yield np.array(images_batch), np.array(labels_batch)
-                images_batch = []
-                labels_batch = []
+        while True:
+            # Validation set image loader
+            il_validation = image_loader(DATASET_PATH, "validation.txt", TRANSFORMS)
+            for file, image in il_validation:
+                images.append(image)
+                labels.append(ALL if validation_labels[file] == "1" else HEALTHY)
+                counter += 1
+                if counter < BATCH_SIZE:
+                    continue
+                yield np.array(images), np.array(labels)
+                images = []
+                labels = []
                 counter = 0
 
-    # tf.config.list_physical_devices('GPU')
 
     training_dataset = tf.data.Dataset.from_generator(
         training_gen,
         output_signature=(
-            tf.TensorSpec(shape=(None, 128, 128, 1), dtype=tf.float32),
-            tf.TensorSpec(shape=(None,), dtype=tf.int32),
+            tf.TensorSpec(shape=(BATCH_SIZE, 128, 128, 1), dtype=tf.float32),
+            tf.TensorSpec(shape=(BATCH_SIZE,), dtype=tf.int32),
         ),
     )
+
     validating_dataset = tf.data.Dataset.from_generator(
         validating_gen,
         output_signature=(
-            tf.TensorSpec(shape=(None, 128, 128, 1), dtype=tf.float32),
-            tf.TensorSpec(shape=(None,), dtype=tf.int32),
+            tf.TensorSpec(shape=(BATCH_SIZE, 128, 128, 1), dtype=tf.float32),
+            tf.TensorSpec(shape=(BATCH_SIZE,), dtype=tf.int32),
         ),
     )
 
-    model = CNN()
 
-    model.fit(training_dataset)
+    model = CNN(BATCH_SIZE, EPOCHS)
 
-    loss, accuracy = model.evaluate(validating_dataset)
+    # model.fit(training_dataset)
+
+    model.load("checkpoint_1735663369.weights.h5")
+
+    loss, accuracy = model.evaluate(validating_gen())
+
+    # model.save()
 
     print(f"Accuracy: {accuracy}")
 

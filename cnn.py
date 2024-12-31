@@ -5,9 +5,16 @@ from tensorflow.keras.layers import InputLayer
 from tensorflow.keras.layers import MaxPool2D
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Dropout
+import time
 
 class CNN:
-    def __init__(self):
+    def __init__(self, batch_size: int, epochs: int):
+        assert batch_size % epochs == 0, "steps per epoch must be an integer"
+
+        self.__batch_size = batch_size
+        self.__epochs = epochs
+
+
         self.__nn = Sequential()
 
         self.__nn.add(InputLayer(shape=(128, 128, 1)));
@@ -34,8 +41,21 @@ class CNN:
 
 
     def fit(self, dat):
-        self.__nn.fit(dat, epochs=10)
+        self.__nn.fit(dat,
+                      batch_size=self.__batch_size,
+                      steps_per_epoch=30,
+                      epochs=self.__epochs)
 
 
     def evaluate(self, val):
-        return self.__nn.evaluate(val, verbose=2)
+        return self.__nn.evaluate(val, steps=30,verbose=2)
+
+
+    def save(self):
+        # milliseconds since Unix epoch
+        ms = int(int(time.time()))
+        self.__nn.save_weights("./checkpoints/" + "checkpoint_" + str(ms) +
+            ".weights.h5")
+
+    def load(self, checkpoint: str):
+        self.__nn.load_weights("./checkpoints/" + checkpoint)
