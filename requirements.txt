@@ -2,3 +2,5 @@ kagglehub
 scikit-image
 matplotlib
 tensorflow
+keras
+numpy

@@ -13,7 +13,7 @@ def image_loader(directories: list, transforms: list[Callable]):
 
 
 def label(filename):
-    result = re.search(r"UID_H?(\d*)_(\d*)_(\d*)_(all|hem)", filename)
+    result = re.search(r"UID_H?(\d+)_(\d+)_(\d+)_(all|hem)", filename)
     return {
         "id": int(result.group(1)),
         "number": int(result.group(2)),
