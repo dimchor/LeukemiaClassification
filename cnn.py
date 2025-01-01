@@ -18,7 +18,6 @@ class CNN:
         self.__nn.add(MaxPool2D((2, 2)))
         self.__nn.add(Dropout(0.5))
 
-        #4. next we stretch the so far processed images into 1-d vectors
         self.__nn.add(Flatten())
 
         # MLP layers

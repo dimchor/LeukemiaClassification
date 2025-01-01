@@ -31,7 +31,7 @@ TRANSFORMS = [
 ]
 ALL = 1
 HEALTHY = 0
-BATCH_SIZE = 48
+BATCH_SIZE = 40
 EPOCHS = 20
 
 
@@ -113,7 +113,7 @@ def main():
 
     early_stopping = EarlyStopping(
         monitor="val_accuracy",
-        patience=5,
+        patience=8,
         restore_best_weights=True,
         verbose=1
     )
