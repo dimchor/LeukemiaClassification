@@ -1,61 +1,54 @@
 from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Conv2D
-from tensorflow.keras.layers import InputLayer
-from tensorflow.keras.layers import MaxPool2D
-from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import Dropout
-import time
+from tensorflow.keras.layers import Dense, Conv2D, InputLayer, MaxPool2D, Flatten, Dropout, BatchNormalization
+import time, json
 
 class CNN:
-    def __init__(self, batch_size: int, epochs: int):
-        assert batch_size % epochs == 0, "steps per epoch must be an integer"
-
-        self.__batch_size = batch_size
-        self.__epochs = epochs
-
-
+    def __init__(self, shape, **kwargs):
         self.__nn = Sequential()
 
-        self.__nn.add(InputLayer(shape=(128, 128, 1)));
+        self.__nn.add(InputLayer(shape=shape));
 
         self.__nn.add(Conv2D(32, (3,3), activation='relu'))
+        self.__nn.add(BatchNormalization())
         self.__nn.add(MaxPool2D((2, 2)))
+        self.__nn.add(Dropout(0.5))
 
         self.__nn.add(Conv2D(64, (3,3), activation='relu'))
+        self.__nn.add(BatchNormalization())
         self.__nn.add(MaxPool2D((2, 2)))
+        self.__nn.add(Dropout(0.5))
 
-        #3.then we ged rid of 20% of the neurons to reduce overfitting
-        self.__nn.add(Dropout(0.2))
         #4. next we stretch the so far processed images into 1-d vectors
         self.__nn.add(Flatten())
 
         # MLP layers
         self.__nn.add(Dense(128, activation='relu'))
+        self.__nn.add(BatchNormalization())
         self.__nn.add(Dense(64, activation='relu'))
+        self.__nn.add(BatchNormalization())
 
         # Output layer
-        self.__nn.add(Dense(2, activation='softmax'))
+        self.__nn.add(Dense(1, activation='sigmoid'))
 
-        self.__nn.compile(loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-
-
-    def fit(self, dat):
-        self.__nn.fit(dat,
-                      batch_size=self.__batch_size,
-                      steps_per_epoch=30,
-                      epochs=self.__epochs)
+        self.__nn.compile(loss='binary_crossentropy', metrics=['accuracy'], **kwargs)
 
 
-    def evaluate(self, val):
-        return self.__nn.evaluate(val, steps=30,verbose=2)
+    def fit(self, *args, **kwargs):
+        self.__history = self.__nn.fit(*args, **kwargs)
 
 
-    def save(self):
+    def evaluate(self, test, n: int, batch_size: int):
+        return self.__nn.evaluate(test, steps=n // batch_size, verbose=2)
+
+
+    def save_weights_history(self):
         # milliseconds since Unix epoch
-        ms = int(int(time.time()))
-        self.__nn.save_weights("./checkpoints/" + "checkpoint_" + str(ms) +
+        ms = str(int(time.time()))
+        self.__nn.save_weights("./checkpoints/" + "model_" + ms +
             ".weights.h5")
 
-    def load(self, checkpoint: str):
+        with open("./history/" + "history_" + ms + ".json", "w") as file:
+            json.dump(self.__history.history, file)
+
+    def load_weights(self, checkpoint: str):
         self.__nn.load_weights("./checkpoints/" + checkpoint)

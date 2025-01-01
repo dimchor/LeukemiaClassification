@@ -3,6 +3,7 @@ from skimage import io
 import os
 import re
 from pathlib import Path
+import json
 
 def image_loader(path: str, filename: str, transforms: list[Callable]):
     with open(filename, "r") as file:
@@ -22,3 +23,10 @@ def label(filename):
         "count": int(result.group(3)),
         "label": result.group(4),
     }
+
+def rows(filename):
+    counter = 0
+    with open(filename, "r") as file:
+        for row in file:
+            counter += 1
+    return counter
