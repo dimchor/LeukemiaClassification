@@ -139,7 +139,7 @@ def main():
         callbacks=[early_stopping, checkpoint],
     )
 
-    # model.load("checkpoint_1735663369.weights.h5")
+    # model.load_weights("model_1735765293.weights.h5")
 
     loss, accuracy = model.evaluate(testing_gen(), rows("testing.txt"), 80)
 
