@@ -1,4 +1,5 @@
 import kagglehub
+from scipy.ndimage import value_indices
 from skimage import color, filters, exposure
 from skimage.color.colorconv import rgb2gray
 from tensorflow.keras.preprocessing.image import img_to_array
@@ -14,14 +15,11 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 import time
 
-from skimage import io
-
 from utilities import image_loader, label, rows
 from cnn import CNN
 
 # Download latest version of dataset
-# DATASET_PATH = kagglehub.dataset_download("andrewmvd/leukemia-classification")
-DATASET_PATH = "C:\\Users\\Dimi\\.cache\\kagglehub\\datasets\\andrewmvd\\leukemia-classification\\versions\\2"
+DATASET_PATH = kagglehub.dataset_download("andrewmvd/leukemia-classification")
 TRANSFORMS = [
     rgb2gray,
     lambda img: resize(img, (128, 128), anti_aliasing=True),
@@ -35,7 +33,7 @@ BATCH_SIZE = 40
 EPOCHS = 20
 
 
-def main():
+def load_validation_labels():
     validation_labels = {}
     with open(
         Path(DATASET_PATH)
@@ -46,7 +44,10 @@ def main():
         reader = csv.DictReader(csvfile)
         for row in reader:
             validation_labels[row["new_names"]] = row["labels"]
+    return validation_labels
 
+
+def train_model(validation_labels):
     # Generators
     def training_gen():
         images = []
@@ -67,12 +68,6 @@ def main():
                 labels = []
                 counter = 0
 
-    # images, labels = next(training_gen())
-    # io.imshow(images[0], cmap='Greys')
-    # plt.show()
-
-    # return
-
     def validating_gen():
         images = []
         labels = []
@@ -80,29 +75,14 @@ def main():
 
         while True:
             # Validation set image loader
-            il_validation = image_loader(DATASET_PATH, "validation.txt", TRANSFORMS)
+            il_validation = image_loader(
+                DATASET_PATH, "validation.txt", TRANSFORMS
+            )
             for file, image in il_validation:
                 images.append(image)
-                labels.append(ALL if validation_labels[file] == "1" else HEALTHY)
-                counter += 1
-                if counter < BATCH_SIZE:
-                    continue
-                yield np.array(images), np.array(labels)
-                images = []
-                labels = []
-                counter = 0
-
-    def testing_gen():
-        images = []
-        labels = []
-        counter = 0
-
-        while True:
-            # Testing set image loader
-            il_validation = image_loader(DATASET_PATH, "testing.txt", TRANSFORMS)
-            for file, image in il_validation:
-                images.append(image)
-                labels.append(ALL if validation_labels[file] == "1" else HEALTHY)
+                labels.append(
+                    ALL if validation_labels[file] == "1" else HEALTHY
+                )
                 counter += 1
                 if counter < BATCH_SIZE:
                     continue
@@ -112,10 +92,7 @@ def main():
                 counter = 0
 
     early_stopping = EarlyStopping(
-        monitor="val_loss",
-        patience=8,
-        restore_best_weights=True,
-        verbose=1
+        monitor="val_loss", patience=8, restore_best_weights=True, verbose=1
     )
 
     checkpoint = ModelCheckpoint(
@@ -123,9 +100,8 @@ def main():
         monitor="val_loss",
         save_best_only=True,
         mode="min",
-        verbose=1
+        verbose=1,
     )
-
 
     model = CNN((128, 128, 1))
 
@@ -139,17 +115,49 @@ def main():
         callbacks=[early_stopping, checkpoint],
     )
 
-    # model.load_weights("model_1735765293.weights.h5")
-
-    loss, accuracy = model.evaluate(testing_gen(), rows("testing.txt"), 80)
-
     model.save_weights_history()
 
-    all_cases = sum([1 if key == "1" else 0 for key in validation_labels.values()]) / len(validation_labels)
+
+def evaluate_model(validation_labels):
+    def testing_gen():
+        images = []
+        labels = []
+        counter = 0
+
+        while True:
+            # Testing set image loader
+            il_validation = image_loader(
+                DATASET_PATH, "testing.txt", TRANSFORMS
+            )
+            for file, image in il_validation:
+                images.append(image)
+                labels.append(
+                    ALL if validation_labels[file] == "1" else HEALTHY
+                )
+                counter += 1
+                if counter < BATCH_SIZE:
+                    continue
+                yield np.array(images), np.array(labels)
+                images = []
+                labels = []
+                counter = 0
+
+    model = CNN((128, 128, 1))
+
+    model.load_weights("./sample_weights/model_1735827065.weights.h5")
+
+    loss, accuracy = model.evaluate(
+        testing_gen(), rows("testing.txt"), BATCH_SIZE
+    )
+
+    all_cases = sum(
+        [1 if key == "1" else 0 for key in validation_labels.values()]
+    ) / len(validation_labels)
     print(f"ALL cases: {all_cases}")
     print(f"HEALTY individuals: {1 - all_cases}")
     print(f"Accuracy: {accuracy}")
 
 
 if __name__ == "__main__":
-    main()
+    validation_labels = load_validation_labels()
+    evaluate_model(validation_labels)
