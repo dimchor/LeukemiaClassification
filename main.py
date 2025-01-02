@@ -112,7 +112,7 @@ def main():
                 counter = 0
 
     early_stopping = EarlyStopping(
-        monitor="val_accuracy",
+        monitor="val_loss",
         patience=8,
         restore_best_weights=True,
         verbose=1
@@ -120,14 +120,14 @@ def main():
 
     checkpoint = ModelCheckpoint(
         "./checkpoints/checkpoint_" + str(int(time.time())) + ".keras",
-        monitor="val_accuracy",
+        monitor="val_loss",
         save_best_only=True,
-        mode="max",
+        mode="min",
         verbose=1
     )
 
 
-    model = CNN((128, 128, 1), optimizer=Adam(learning_rate=1e-3))
+    model = CNN((128, 128, 1))
 
     history = model.fit(
         training_gen(),
