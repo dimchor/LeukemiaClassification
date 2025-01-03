@@ -1,0 +1,149 @@
+haematology-lessons:
+  type: book
+  title: Hematology lessons
+  author:
+    - Loukopoulos, Dimitris
+    - Politou, Marianna
+  publisher: Kallipos, Open Academic Editions
+  serial-number:
+    doi: "10.57713/kallipos-726"
+  date: 2015
+  page-range: 168-170
+
+practical-guide:
+  type: book
+  title: Practical Guide to Pediatric Hematology - Queries and Responses
+  author: Vlacha, Vasiliki
+  publisher: Kallipos, Open Academic Editions
+  serial-number:
+    doi: "10.57713/kallipos-244"
+  date: 2023
+  page-range: 305
+
+classification-knn-ieee:
+  type: article
+  title: Classification of Leukemia White Blood Cell Cancer
+  author:
+    - Vineela, M.
+    - D. S. Reddy, G.
+    - Karthik, G.
+    - Muthukumaran, N.
+    - H. Al Deen, S.
+  publisher: 2024 International Conference on Inventive Computation Technologies (ICICT)
+  serial-number:
+    doi: "10.1109/ICICT60155.2024.10544978"
+  date: 2024
+
+classification-cnn-elsevier:
+  type: article
+  title: An efficient deep Convolutional Neural Network based detection and classification of Acute Lymphoblastic Leukemia
+  author:
+    - Kumar Das, Pradeep
+    - Meher, Sukadev
+  publisher: Elsevier
+  serial-number:
+    doi: "10.1016/j.eswa.2021.115311"
+  date: 2021
+
+classification-cnn-springer:
+  type: article
+  title: Leukemia classification using different CNN-based algorithms-comparative study
+  author:
+    - Al-Bashir, A.K.
+    - Khnouf, R.E.
+    - Bany Issa, L.R
+  publisher: Springer Nature
+  serial-number:
+    doi: "10.1007/s00521-024-09554-9"
+  date: 2024
+
+classification-cnn-x-ray:
+  type: article
+  title: Leukemia classification using the deep learning method of CNN
+  author:
+    - Arivuselvam, B.
+    - Sudha, S.
+  journal:
+    value: Journal of X-Ray Science and Technology, vol. 30, no. 3, pp. 567-585
+  serial-number:
+    doi: "10.3233/XST-211055"
+  date: 2022
+
+ds-cite-1:
+  type: article
+  title: "GCTI-SN: Geometry-Inspired Chemical and Tissue Invariant StainNormalization of Microscopic Medical Images"
+  author:
+    - Gupta, Anubha
+    - Duggal, Rahul
+    - Gupta, Ritu
+    - Kumar, Lalit
+    - Thakkar, Nisarg
+    - Satpathy, Devprakash
+  note: under review
+
+ds-cite-2:
+  type: article
+  title: Stain Color Normalization and Segmentation of Plasma Cells in Microscopic Images as a Prelude to Development of Computer Assisted Automated Disease Diagnostic Tool in Multiple Myeloma
+  author:
+    - Gupta, Ritu
+    - Mallick, Pramit
+    - Duggal, Rahul
+    - Gupta, Anubha
+    - Sharma, Ojaswa
+  location: 16th International Myeloma Workshop (IMW), India
+  date: 2017
+
+ds-cite-3:
+  type: article
+  title: Overlapping Cell Nuclei Segmentation in Microscopic Images Using Deep Belief Networks
+  author:
+    - Duggal, Rahul
+    - Gupta, Anubha
+    - Gupta, Ritu
+    - Wadhwa, Manya
+    - Ahuja, Chirag
+  location: Indian Conference on Computer Vision, Graphics and Image Processing (ICVGIP), India
+  date: 2016
+
+ds-cite-4:
+  type: article
+  title: Segmentation of overlapping/touching white blood cell nuclei using artificial neural networks
+  author:
+    - Duggal, Rahul
+    - Gupta, Anubha
+    - Gupta, Ritu
+  location: CME Series on Hematoncopathology, All India Institute of Medical Sciences (AIIMS), New Delhi, India
+  date: 2016
+
+ds-cite-5:
+  type: article
+  title: "SD-Layer: Stain Deconvolutional Layer for CNNs in Medical Microscopic Imaging"
+  author:
+    - Duggal, Rahul
+    - Gupta, Anubha
+    - Gupta, Ritu
+    - Mallick, Pramit
+  parent:
+    type: article
+    title: Lecture Notes in Computer Science, Part III, LNCS 10435
+    author:
+      - Descoteaux, M.
+      - Maier-Hein, L.
+      - Franz, A.
+      - Jannin, P.
+      - Collins, D.
+      - Duchesne S.
+    location: Medical Image Computing and Computer-Assisted Intervention − MICCAI 2017, MICCAI 2017
+    page-range: 435-443
+    publisher: Springer, Cham
+    serial-number:
+      doi: "10.1007/978-3-319-66179-7_50"
+
+ds-self:
+  type: misc
+  title: ALL Challenge dataset of ISBI 2019 [Data set]. The Cancer Imaging Archive.
+  author:
+    - Gupta, Anubha
+    - Gupta, Ritu
+  serial-number:
+    doi: "10.7937/tcia.2019.dc64i46r"
