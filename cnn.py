@@ -58,3 +58,6 @@ class CNN:
 
     def load_weights(self, checkpoint: str):
         self.__nn.load_weights(checkpoint)
+
+    def model(self):
+        return self.__nn
