@@ -105,3 +105,16 @@ array and then normalised to further reduce numeric complexity.
   caption: [Processed image used by model],
   image("images/UID_H12_24_5_hem_processed.png", width: 40%),
 )
+
+Only a part of the dataset is used in this project. Specifically,
+- 4.800 images are used for training the model
+- 1.200 images are used as validation set and
+- 1.200 images are used for testing the model.
+
+The images in all three sets are arbitrarily chosen. The images used for
+training are located in the training subdirectory. The images used for
+validating and testing are located in the validation subdirectory. Even though
+the dataset does have a set of images for the purpose of testing, the class
+labels are not available publicly @ds-self. For this reason, the author decided
+to pull additional images from the validation subdirectory to populate the
+testing set.
