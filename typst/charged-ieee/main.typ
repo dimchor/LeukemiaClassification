@@ -118,3 +118,42 @@ the dataset does have a set of images for the purpose of testing, the class
 labels are not available publicly @ds-self. For this reason, the author decided
 to pull additional images from the validation subdirectory to populate the
 testing set.
+
+The model consist of 14 layers. Specifically:
++ a two-dimentional convolution layer which has 32 filters, a kernel size of
+  3 by 3, input size equal to 128x128x1 and uses ReLU as its activator function,
++ a batch normalisation layer,
++ a two-dimentional max pooling layer,
++ a dropout layer,
++ a two-dimentional convolution layer which has 64 filters, a kernel size of
+  3 by 3 and uses ReLU as its activator function,
++ a batch normalisation layer,
++ a two-dimentional max pooling layer,
++ a dropout layer,
++ a flattening layer,
++ a layer of 128 neurons,
++ a batch normalisation layer,
++ a layer of 64 neurons
++ a batch normalisation layer and
++ a single-neuron layer as the output layer.
+
+#figure(
+  caption: [Plot of model],
+  image("images/model.png"),
+)
+
+The chosen batch size is 40 and the epoch number is 20.
+
+Validation loss was monitored in order to ensure it remained minimal. Training
+is stopped when validation loss has not improved after 8 epochs. In addition,
+model checkpoints are used to keep the best-performing model at the end of the
+training. Finally, once the training is complete, the weights from the
+best-performing model are saved for later use.
+
+// move this to experimenta result
+
+#figure(
+  caption: [Accuracy, loss, validation accuracy and validation loss using the
+    provided sample weights],
+  image("images/accuracy_loss.png")
+)
