@@ -147,8 +147,9 @@ The chosen batch size is 40 and the epoch number is 20.
 Validation loss was monitored in order to ensure it remained minimal. Training
 is stopped when validation loss has not improved after 8 epochs. In addition,
 model checkpoints are used to keep the best-performing model at the end of the
-training. Finally, once the training is complete, the weights from the
-best-performing model are saved for later use.
+training. Οnce the training is complete, the weights from the
+best-performing model are saved for later use. Finally, binary cross entropy is
+used as the loss function.
 
 // move this to experimenta result
 
