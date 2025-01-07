@@ -13,6 +13,7 @@ import numpy as np
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ReduceLROnPlateau
+from tensorflow.math import confusion_matrix
 import time
 
 from utilities import image_loader, label, rows
@@ -146,8 +147,10 @@ def evaluate_model(validation_labels):
 
     model.load_weights("./sample_weights/model_1735827065.weights.h5")
 
+    test_size = rows("testing.txt")
+
     loss, accuracy = model.evaluate(
-        testing_gen(), rows("testing.txt"), BATCH_SIZE
+        testing_gen(), test_size, BATCH_SIZE
     )
 
     all_cases = sum(
@@ -156,6 +159,20 @@ def evaluate_model(validation_labels):
     print(f"ALL cases: {all_cases}")
     print(f"HEALTY individuals: {1 - all_cases}")
     print(f"Accuracy: {accuracy}")
+
+    predictions = []
+    labels = []
+    gen = testing_gen()
+    for _ in range(test_size // BATCH_SIZE):
+        images_batch, labels_batch = next(gen)
+        predictions_batch = model.model().predict(images_batch)
+        predictions += [1 if prediction >= 0.5 else 0 for prediction in predictions_batch]
+        labels+= labels_batch.tolist()
+
+    cf = confusion_matrix(predictions, labels)
+
+    print("Confusion matrix: ")
+    print(cf)
 
 
 if __name__ == "__main__":
