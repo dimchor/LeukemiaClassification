@@ -151,7 +151,17 @@ training. Οnce the training is complete, the weights from the
 best-performing model are saved for later use. Finally, binary cross entropy is
 used as the loss function.
 
-// move this to experimenta result
+= Experimental Result
+
+The experiments conducted on Python Tensorflow showed suboptimal accuracy.
+In particular, the model is able to predict only about 67,3% of cases correctly.
+
+// talk about sensitivity and specificity
+
+#figure(
+  caption: [Confusion matrix],
+  image("images/confusion_matrix.png"),
+)
 
 #figure(
   caption: [Accuracy, loss, validation accuracy and validation loss using the
