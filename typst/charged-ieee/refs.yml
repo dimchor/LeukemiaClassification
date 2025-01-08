@@ -147,3 +147,16 @@ ds-self:
     - Gupta, Ritu
   serial-number:
     doi: "10.7937/tcia.2019.dc64i46r"
+
+ai:
+  type: book
+  title: Artificial Intelligence (Τεχνητή Νοημοσύνη)
+  author:
+    - Vlachavas, Ioannis
+    - Kefalas, Petros
+    - Vassileiadis, Nikolaos
+    - Kokkoras, Fotis
+    - Sakellariou, Ilias
+  publisher: Ekdoseis Panepistimiou Makedonias (Εκδόσεις Πανεπιστημίου Μακεδονίας)
+  date: 2020
+  page-range: 511-512

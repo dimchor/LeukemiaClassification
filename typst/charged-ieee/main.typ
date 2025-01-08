@@ -154,17 +154,46 @@ used as the loss function.
 = Experimental Result
 
 The experiments conducted on Python Tensorflow showed suboptimal accuracy.
-In particular, the model is able to predict only about 67,3% of cases correctly.
+In particular, the model the model predicted correctly 808 out of 1200 presented
+case images. Thus, making it only about 67,3% accurate.
 
-// talk about sensitivity and specificity
+Two common metrics used to measure a model's ability to provide correct
+results are sensitivity (TPR):
+$ "TPR"="TP"/("TP"+"FN") $ <tpr>
+which is the percentange of positive cases predicted as positive and specificity
+(TNR):
+$ "TNR"="TN"/("TN"+"FP") $ <tnr>
+which is the percentange of negative cases predicted as negative @ai.
+
+With @tpr we get $"TPR" approx 0,664$ or about 66,4%.
+
+With @tnr we get $"TNR" approx 0,841$ or about 84,1%.
+
+The numbers used to calculate the aforementioned metrics are given by the
+following confusion matrix:
 
 #figure(
   caption: [Confusion matrix],
   image("images/confusion_matrix.png"),
 )
 
+Below is the accuracy and loss of the model during the training process:
+
 #figure(
   caption: [Accuracy, loss, validation accuracy and validation loss using the
     provided sample weights],
   image("images/accuracy_loss.png")
 )
+
+The model showed the lowest validation loss in epoch six and therefore the
+weights of that epoch were saved for later use.
+
+= Conclusions
+
+The model presented in this paper is inadequate in diagnosing leukaemia patients
+correctly. This can be inferred from its mediocre accuracy of 67,3%.
+Even though the model is able to detect negative cases with relatively high
+precision ($"TNR" approx 0,841$) it is substantially worse in detecting positive
+cases ($"TPR" approx 0,664$). This is crucial as missing such a diagnosis may
+have devastating consequences on a patient's outcome. Therefore, it is unwise
+to use this model for diagnosing leukaemia patients in its current state.
